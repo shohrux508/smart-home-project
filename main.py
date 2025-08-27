@@ -49,6 +49,9 @@ def ensure_user_initialized(user_id: str):
 @app.get('/')
 async def welcome():
     return {'message': 'Hello, world!'}
+@app.get("/v1.0")
+async def root_v1():
+    return {"status": "ok"}
 
 # --------- OAUTH2: /authorize ---------
 @app.get("/authorize")
