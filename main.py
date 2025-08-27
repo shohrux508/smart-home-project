@@ -46,6 +46,9 @@ def user_by_token(token: str) -> str:
 def ensure_user_initialized(user_id: str):
     device_state.setdefault(user_id, {"relay_1": {"on": False}})
 
+@app.get('/')
+async def welcome():
+    return {'message': 'Hello, world!'}
 
 # --------- OAUTH2: /authorize ---------
 @app.get("/authorize")
