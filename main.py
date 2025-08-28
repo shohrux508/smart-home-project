@@ -63,7 +63,7 @@ async def authorize(request: Request):
     """
     q = dict(request.query_params)
     client_id = q.get("client_id")
-    redirect_uri = q.get("redirect_uri")
+    redirect_uri = '/'
     state = q.get("state")
     response_type = q.get("response_type", "code")
 
