@@ -1,7 +1,11 @@
 import time
 
 from fastapi import HTTPException
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pyee.asyncio import AsyncIOEventEmitter
 from starlette.requests import Request
+
+event_bus = AsyncIOEventEmitter()
 
 CLIENT_ID = "my-smart-home"
 CLIENT_SECRET = "supersecret123"
@@ -13,7 +17,6 @@ auth_codes = {}  # code -> {user_id, client_id, exp, redirect_uri}
 access_tokens = {}  # access_token -> {user_id, client_id, exp, refresh_token}
 refresh_tokens = {}  # refresh_token -> {user_id, client_id, exp}
 device_state = {}  # user_id -> {"relay_1": {"on": bool}}
-
 
 # ====== ВНУТРЕННЕЕ "ЯДРО" (мок) ======
 # Один пользователь и одно устройство-реле
@@ -31,6 +34,7 @@ DB = {
     },
     "tokens": {"alice-demo": "user-1"},  # маппинг токена Алисы -> user_id
 }
+
 
 def now() -> int: return int(time.time())
 
@@ -51,3 +55,24 @@ def user_by_token(token: str) -> str:
 
 def ensure_user_initialized(user_id: str):
     device_state.setdefault(user_id, {"relay_1": {"on": False}})
+
+
+# Настройка логирования
+
+class LoggingSettings(BaseSettings):
+    telegram_enabled: bool = True
+    telegram_log_bot_token: str = ""
+    telegram_chat_id: str = ""
+    level: str = "INFO"
+    log_to_console: bool = True
+    log_to_file: bool = False
+    log_file_path: str = "logs/app.log"
+    max_bytes: int = 5 * 1024 * 1024
+    backup_count: int = 3
+    formatter: str = "[%(asctime)s] [server] [%(levelname)s] %(message)s (%(filename)s:%(lineno)d)"
+    telegram_formatter: str = "[%(levelname)s] [server] %(message)s (%(filename)s:%(lineno)d)"
+    model_config = SettingsConfigDict(
+        env_file="../.env",  # путь до вашего .env
+        env_file_encoding="utf-8",  # кодировка .env
+        extra='ignore'
+    )

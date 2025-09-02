@@ -4,8 +4,9 @@ from typing import Dict, Any, List
 from fastapi import FastAPI, Depends
 from starlette.websockets import WebSocket
 
-from discovery_check import router as r1
-from auth_module import router as r2, auth_yandex
+from app.discovery_check import router as r1
+from app.auth_module import router as r2, auth_yandex
+from config import DB
 
 app = FastAPI(title="Sh_IoT - Система интернет вещей")
 

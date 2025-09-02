@@ -6,7 +6,7 @@ from config import require_bearer, user_by_token
 router = APIRouter()
 
 
-@router.get("/v1.0/user/devices")
+@router.get("/v1.0/user/devices", tags=['check'])
 async def unlink():
     return {"status": "ok"}
 
